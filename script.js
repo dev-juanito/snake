@@ -27,7 +27,7 @@ window.onload = function () {
     board.width = total_col * blockSize;
     placeFood();
     document.addEventListener("keyup", changeDirection);  //for movements
-    // Velocidad  de la serpiente
+    // Snake speed
     setInterval(update, 1000 / 10);
 }
 
@@ -127,7 +127,7 @@ function placeFood() {
     foodY = Math.floor(Math.random() * total_row) * blockSize; 
 }
 
-// Preguntas y lógica del modal
+// Questions and modal logic
 let questions = [
     { q: "¿Which sentence correctly uses “going to” for a future plan?", options: ["I going to study English","i am going to study English","I will studiying English","i studies English tomorrow"], answer: 1 },
     { q: "Which sentence correctly uses Present Continuous for future plans?", options: ["We will meeting the manager tomorrow.","We meeting the manager tomorrow.","We going meet tomorrow.","We are meeting the manager tomorrow"], answer: 3 },
@@ -184,7 +184,7 @@ function handleAnswer(selected, correct){
     if (selected === correct){
         feedback.classList.remove('incorrect');
         feedback.classList.add('correct');
-        feedback.textContent = '✓ ¡Correcto! Continúas jugando...';
+        feedback.textContent = '✓ Correct! Keep playing...';
         setTimeout(()=>{
             const modal = document.getElementById('questionModal');
             if (modal) modal.setAttribute('aria-hidden','true');
@@ -193,7 +193,7 @@ function handleAnswer(selected, correct){
     } else {
         feedback.classList.remove('correct');
         feedback.classList.add('incorrect');
-        feedback.textContent = '✗ Incorrecto. Reiniciando juego...';
+        feedback.textContent = '✗ Incorrect. Restarting game...';
         setTimeout(()=>{
             const modal = document.getElementById('questionModal');
             if (modal) modal.setAttribute('aria-hidden','true');
@@ -203,7 +203,7 @@ function handleAnswer(selected, correct){
 }
 
 function restartGame(){
-    // resetear estado del juego
+    // Reset game state
     snakeX = blockSize * 5;
     snakeY = blockSize * 5;
     speedX = 0;
@@ -213,7 +213,7 @@ function restartGame(){
     updateFruitCounter();
     placeFood();
     gameOver = false;
-    // Limpiar feedback
+    // Clear feedback
     const feedback = document.getElementById('feedback');
     if (feedback) {
         feedback.textContent = '';
