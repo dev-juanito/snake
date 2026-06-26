@@ -17,17 +17,17 @@ let foodX;
 let foodY;
 
 let gameOver = false;
+let fruitsEaten = 0;
 
 window.onload = function () {
     // Set board height and width
     board = document.getElementById("board");
+    context = board.getContext("2d");
     board.height = total_row * blockSize;
     board.width = total_col * blockSize;
-    context = board.getContext("2d");
-
     placeFood();
     document.addEventListener("keyup", changeDirection);  //for movements
-    // Set snake speed
+    // Velocidad  de la serpiente
     setInterval(update, 1000 / 10);
 }
 
@@ -46,7 +46,12 @@ function update() {
 
     if (snakeX == foodX && snakeY == foodY) {
         snakeBody.push([foodX, foodY]);
+        fruitsEaten++;
         placeFood();
+
+        if (fruitsEaten % 3 === 0) {
+            triggerQuestion();
+        }
     }
 
     // body of snake will grow
@@ -73,7 +78,7 @@ function update() {
         
         // Out of bound condition
         gameOver = true;
-            triggerQuestion();
+        restartGame();
     }
 
     for (let i = 0; i < snakeBody.length; i++) {
@@ -81,7 +86,7 @@ function update() {
             
             // Snake eats own body
             gameOver = true;
-            triggerQuestion();
+            restartGame();
         }
     }
 }
@@ -129,30 +134,18 @@ let questions = [
     { q: "Choose the incorrect sentence.", options: ["She is going to travel next year.","They are visiting us next Friday.","He going to buy a car.","We will call you later."], answer: 2 },
     { q: "Which sentence expresses a prediction based on evidence?", options: ["It will rains.", "Look at those clouds! It’s going to rain.", "It raining tomorrow.", "Rain tomorrow."], answer: 1 },
     { q: "Which sentence shows an instant decision?", options: ["I’ll answer the phone.", "I answer the phone yesterday.", "I am answering the phone next month.", "I going answer the phone."], answer: 0 },
-    
 ];
-let questionIndex = 0;
-let savedState = null; // almacena el estado justo antes de la muerte
-
 function triggerQuestion(){
-    // guardar estado anterior (posición válida antes del salto que causó la muerte)
-    const prevX = snakeX - speedX * blockSize;
-    const prevY = snakeY - speedY * blockSize;
-    savedState = {
-        snakeX: prevX,
-        snakeY: prevY,
-        speedX: speedX,
-        speedY: speedY,
-        snakeBody: JSON.parse(JSON.stringify(snakeBody)),
-        foodX: foodX,
-        foodY: foodY
-    };
-    // mostrar modal
     const modal = document.getElementById('questionModal');
     if (!modal) return;
     modal.setAttribute('aria-hidden','false');
     gameOver = true;
-    showQuestionModal(questions[questionIndex % questions.length]);
+    showQuestionModal(getRandomQuestion());
+}
+
+function getRandomQuestion(){
+    const randomIndex = Math.floor(Math.random() * questions.length);
+    return questions[randomIndex];
 }
 
 function showQuestionModal(qObj){
@@ -176,46 +169,18 @@ function handleAnswer(selected, correct){
     if (!feedback) return;
     if (selected === correct){
         feedback.style.color = 'green';
-        feedback.textContent = '¡Correcto! Continúas donde ibas...';
-        // reaparecer en un punto aleatorio del tablero y continuar conservando puntos
+        feedback.textContent = '¡Correcto! Continúas jugando...';
         setTimeout(()=>{
             const modal = document.getElementById('questionModal');
             if (modal) modal.setAttribute('aria-hidden','true');
-            // restaurar cuerpo y velocidad guardados para conservar puntos
-            if (savedState){
-                snakeBody = savedState.snakeBody;
-                speedX = savedState.speedX;
-                speedY = savedState.speedY;
-            }
-            // buscar posición aleatoria libre (no en comida ni en el cuerpo)
-            function getRandomFreePos(){
-                for (let i=0;i<200;i++){
-                    const x = Math.floor(Math.random() * total_col) * blockSize;
-                    const y = Math.floor(Math.random() * total_row) * blockSize;
-                    let conflict = false;
-                    if (x === foodX && y === foodY) conflict = true;
-                    for (let s of snakeBody){ if (s[0] === x && s[1] === y){ conflict = true; break; } }
-                    if (!conflict) return {x,y};
-                }
-                // fallback: usar posición guardada o centro
-                return { x: savedState ? savedState.snakeX : blockSize * 5, y: savedState ? savedState.snakeY : blockSize * 5 };
-            }
-            const pos = getRandomFreePos();
-            snakeX = pos.x;
-            snakeY = pos.y;
-            // avanzar a la siguiente pregunta para la próxima muerte
-            questionIndex++;
-            savedState = null;
             gameOver = false;
         }, 700);
     } else {
         feedback.style.color = 'red';
         feedback.textContent = 'Incorrecto. Reiniciando juego...';
-        // avanzar a la siguiente pregunta para la próxima muerte
         setTimeout(()=>{
             const modal = document.getElementById('questionModal');
             if (modal) modal.setAttribute('aria-hidden','true');
-            questionIndex++;
             restartGame();
         }, 900);
     }
@@ -228,6 +193,7 @@ function restartGame(){
     speedX = 0;
     speedY = 0;
     snakeBody = [];
+    fruitsEaten = 0;
     placeFood();
     gameOver = false;
 }
