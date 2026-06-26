@@ -1,24 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juego de la serpiente</title>
+    <title>Snake Topic Future - Juego Educativo</title>
     <link rel="stylesheet"  href="styles.css">
     <script src="script.js"></script>
 </head>
 <body>
-    <h1>Snake game 
-        <div class="geeks">In the future</div>
-    </h1>
-    <canvas id="board"></canvas>
+    <!-- Encabezado del juego -->
+    <header class="game-header">
+        <h1>🐍 Snake Topic Future 🐍
+            <div class="geeks">In the future</div>
+        </h1>
+        <div class="authors">
+            <p><strong>Autores:</strong> Valerie Sofia Bonilla Delgadillo | Juan José Muñoz Osuna</p>
+        </div>
+    </header>
+
+    <!-- Instrucciones del juego -->
+    <section class="instructions">
+        <h2> Reglas del Juego</h2>
+        <div class="rules-container">
+            <div class="rule">
+                <strong> Objetivo:</strong>
+                <p>Controla la serpiente para comer frutas (puntos amarillos) y crecer, evitando chocar con las paredes o contigo misma.</p>
+            </div>
+            <div class="rule">
+                <strong> Controles:</strong>
+                <p>Usa las <strong>flechas del teclado</strong> (↑ ↓ ← →) o las teclas <strong>WASD</strong> para mover la serpiente.</p>
+            </div>
+            <div class="rule">
+                <strong> Comer Frutas:</strong>
+                <p>Cada fruta comida suma 1 punto y hace crecer la serpiente.</p>
+            </div>
+            <div class="rule">
+                <strong> Preguntas:</strong>
+                <p>Cada 3 frutas consumidas, deberás responder una pregunta de opción múltiple para continuar.</p>
+            </div>
+            <div class="rule">
+                <strong> Game Over:</strong>
+                <p>El juego termina si la serpiente choca contra las paredes o contra sí misma.</p>
+            </div>
+            <div class="rule">
+                <strong> Retroalimentación:</strong>
+                <p>Recibirás información inmediata si tu respuesta es correcta o incorrecta.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tablero del juego -->
+    <section class="game-section">
+        <canvas id="board"></canvas>
+        <div class="score-info">
+            <p>Frutas comidas: <span id="fruitCount">0</span></p>
+        </div>
+    </section>
     <!-- Modal de preguntas (se muestra cada 3 frutas) -->
     <div id="questionModal" class="modal" aria-hidden="true">
         <div class="modal-content">
-            <h2 id="questionText">Pregunta</h2>
+            <h2>❓ Pregunta de Evaluación</h2>
+            <p id="questionText" class="question-text">Pregunta</p>
             <div id="optionsContainer" class="options"></div>
             <div id="feedback" class="feedback"></div>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="game-footer">
+        <p> Juego educativo interactivo | Snake Topic Future 2026</p>
+    </footer>
 </body>
 </html>

@@ -47,6 +47,7 @@ function update() {
     if (snakeX == foodX && snakeY == foodY) {
         snakeBody.push([foodX, foodY]);
         fruitsEaten++;
+        updateFruitCounter();
         placeFood();
 
         if (fruitsEaten % 3 === 0) {
@@ -93,23 +94,23 @@ function update() {
 
 // Movement of the Snake - We are using addEventListener
 function changeDirection(e) {
-    if (e.code == "ArrowUp" && speedY != 1) { 
+    if ((e.code == "ArrowUp" || e.key == "w" || e.key == "W") && speedY != 1) { 
         // If up arrow key pressed with this condition...
         // snake will not move in the opposite direction
         speedX = 0;
         speedY = -1;
     }
-    else if (e.code == "ArrowDown" && speedY != -1) {
+    else if ((e.code == "ArrowDown" || e.key == "s" || e.key == "S") && speedY != -1) {
         //If down arrow key pressed
         speedX = 0;
         speedY = 1;
     }
-    else if (e.code == "ArrowLeft" && speedX != 1) {
+    else if ((e.code == "ArrowLeft" || e.key == "a" || e.key == "A") && speedX != 1) {
         //If left arrow key pressed
         speedX = -1;
         speedY = 0;
     }
-    else if (e.code == "ArrowRight" && speedX != -1) { 
+    else if ((e.code == "ArrowRight" || e.key == "d" || e.key == "D") && speedX != -1) { 
         //If Right arrow key pressed
         speedX = 1;
         speedY = 0;
@@ -148,6 +149,19 @@ function getRandomQuestion(){
     return questions[randomIndex];
 }
 
+// Actualizar el contador de frutas en la interfaz
+function updateFruitCounter(){
+    const fruitCountElement = document.getElementById('fruitCount');
+    if (fruitCountElement) {
+        fruitCountElement.textContent = fruitsEaten;
+    }
+}
+
+// Inicializar el contador de frutas
+window.addEventListener('DOMContentLoaded', () => {
+    updateFruitCounter();
+});
+
 function showQuestionModal(qObj){
     const questionText = document.getElementById('questionText');
     const optionsContainer = document.getElementById('optionsContainer');
@@ -168,16 +182,18 @@ function handleAnswer(selected, correct){
     const feedback = document.getElementById('feedback');
     if (!feedback) return;
     if (selected === correct){
-        feedback.style.color = 'green';
-        feedback.textContent = '¡Correcto! Continúas jugando...';
+        feedback.classList.remove('incorrect');
+        feedback.classList.add('correct');
+        feedback.textContent = '✓ ¡Correcto! Continúas jugando...';
         setTimeout(()=>{
             const modal = document.getElementById('questionModal');
             if (modal) modal.setAttribute('aria-hidden','true');
             gameOver = false;
         }, 700);
     } else {
-        feedback.style.color = 'red';
-        feedback.textContent = 'Incorrecto. Reiniciando juego...';
+        feedback.classList.remove('correct');
+        feedback.classList.add('incorrect');
+        feedback.textContent = '✗ Incorrecto. Reiniciando juego...';
         setTimeout(()=>{
             const modal = document.getElementById('questionModal');
             if (modal) modal.setAttribute('aria-hidden','true');
@@ -194,8 +210,15 @@ function restartGame(){
     speedY = 0;
     snakeBody = [];
     fruitsEaten = 0;
+    updateFruitCounter();
     placeFood();
     gameOver = false;
+    // Limpiar feedback
+    const feedback = document.getElementById('feedback');
+    if (feedback) {
+        feedback.textContent = '';
+        feedback.classList.remove('correct', 'incorrect');
+    }
 }
 
 
